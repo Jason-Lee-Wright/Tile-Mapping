@@ -35,6 +35,7 @@ public class TestTilemap : MonoBehaviour
         {
             for (int x = 0; x < width; x++)
             {
+
                 if (y == 0 || y == height - 1 || x == 0 || x == width - 1)
                 {
                     //Debug.Log($"Wall Made : {x}, {y}");
@@ -81,8 +82,8 @@ public class TestTilemap : MonoBehaviour
     // Helper function to check if a position is adjacent to a wall
     bool IsAdjacentToWall(int x, int y, int width, int height)
     {
-        return (x > 0 && x < width - 1 && y > 0 && y < height - 1) &&
-               (y == 1 || y == height - 2 || x == 1 || x == width - 2);
+        return ((x > 0 && x < width - 1 && (y == 1 || y == height - 2)) ||  // Near top or bottom wall
+            (y > 0 && y < height - 1 && (x == 1 || x == width - 2)));   // Near left or right wall
     }
 
 
