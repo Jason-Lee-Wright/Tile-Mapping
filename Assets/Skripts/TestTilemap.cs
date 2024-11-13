@@ -10,13 +10,32 @@ public class TestTilemap : MonoBehaviour
 {
     public Tilemap tilemap; // Reference to the Tilemap component
     public Tile wallTile, doorTile, chestTile, floorTile; // Tile assets for different map elements
+    public bool toggle = true;
+
+    public int[,] MultMap = new int[15, 15];
 
     void Start()
     {
         // Test by generating a map and displaying it
         string generatedMap = GenerateMapString(15, 15);
-        ConvertMapToTilemap(generatedMap);
-        //Debug.Log("Map should Appear");
+        string premade = LoadPremadeMap();
+        //ConvertMapToTilemap(generatedMap);
+        ConvertMapToTilemap(premade);
+    }
+
+    private void Update()
+    {
+        if (toggle == true && Input.GetKeyDown(KeyCode.Space))
+        {
+            string generatedMap = GenerateMapString(15, 15);
+            ConvertMapToTilemap(generatedMap);
+        }
+
+        if (toggle == false && Input.GetKeyDown(KeyCode.Space))
+        {
+            string premade = LoadPremadeMap();
+            ConvertMapToTilemap(premade);
+        }
     }
 
     // Generates a map string with specified width and height
@@ -41,9 +60,9 @@ public class TestTilemap : MonoBehaviour
                     //Debug.Log($"Wall Made : {x}, {y}");
                     map.Append('#'); // Border walls
                 }
-                else if ((x == width - 2 && y == height / 2) || (x == 1 &&y == height / 2))
+                else if ((x == width - 2 && y == height / 2) || (x == 1 && y == height / 2))
                 {
-                    Debug.Log($"Door Made : {x}, {y}");
+                    //Debug.Log($"Door Made : {x}, {y}");
                     map.Append('O'); // Place a door at the center for example
                 }
                 else
@@ -61,15 +80,17 @@ public class TestTilemap : MonoBehaviour
         }
 
         // Randomly place chests in wall-adjacent positions
-        System.Random random = new System.Random();
+
         while (chestCount < maxChests && wallAdjacentPositions.Count > 0)
         {
-            int randomIndex = random.Next(wallAdjacentPositions.Count);
+            int randomIndex = UnityEngine.Random.Range(0, wallAdjacentPositions.Count);
             Vector2Int pos = wallAdjacentPositions[randomIndex];
 
             // Replace the character in the StringBuilder with a chest at this position
             int index = pos.y * (width + 1) + pos.x; // (width + 1) to account for newline characters
             map[index] = '$';
+
+            Debug.Log($"Chest Made {pos.x} {pos.y}");
 
             // Remove position from list and increment chest count
             wallAdjacentPositions.RemoveAt(randomIndex);
@@ -82,8 +103,8 @@ public class TestTilemap : MonoBehaviour
     // Helper function to check if a position is adjacent to a wall
     bool IsAdjacentToWall(int x, int y, int width, int height)
     {
-        return ((x > 0 && x < width - 1 && (y == 1 || y == height - 2)) ||  // Near top or bottom wall
-            (y > 0 && y < height - 1 && (x == 1 || x == width - 2)));   // Near left or right wall
+        // Check adjacent tiles within bounds
+        return (x == 1 || x == width - 2 || y == 1 || y == height - 2);
     }
 
 
@@ -127,9 +148,31 @@ public class TestTilemap : MonoBehaviour
 
     }
 
-    // Load a pre-made map from a text file
-    void LoadPremadeMap(string mapFilePath)
+    // Load a premade map from a file and convert it to a single string for tilemap conversion
+    string LoadPremadeMap()
     {
-        
+        string path = @"C:\Jason Projects\Unity\Tile Mapping\Assets\Text\TextFile1.txt";
+
+        if (System.IO.File.Exists(path))
+        {
+            StringBuilder mapBuilder = new StringBuilder();
+            string[] lines = System.IO.File.ReadAllLines(path);
+
+            foreach (string line in lines)
+            {
+                if (!string.IsNullOrWhiteSpace(line)) // Only append non-empty lines
+                {
+                    Debug.Log(line);
+                    mapBuilder.AppendLine(line); // Add each line with a newline
+                }
+            }
+
+            return mapBuilder.ToString();
+        }
+        else
+        {
+            Debug.LogError("File not found at: " + path);
+            return string.Empty;
+        }
     }
 }
