@@ -36,7 +36,7 @@ public class TestTilemap : MonoBehaviour
         string[] mapData = new string[height]; // Store final map data here
         List<Vector2Int> wallAdjacentPositions = new List<Vector2Int>(); // Positions adjacent to walls
         int chestCount = 0;
-        int maxChests = 3;
+        int maxChests = 2;
 
         for (int y = 0; y < height; y++)
         {
