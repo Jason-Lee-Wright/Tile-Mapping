@@ -107,6 +107,14 @@ public class TestTilemap : MonoBehaviour
         return (x == 1 || x == width - 2 || y == 1 || y == height - 2);
     }
 
+    public bool IsTilePassable(Vector3Int position)
+    {
+        TileBase tile = tilemap.GetTile(position);
+
+        // Check if the tile at the given position is impassable
+        return tile != wallTile && tile != doorTile && tile != chestTile;
+    }
+
 
     // Converts the generated map string into a Unity Tilemap
     void ConvertMapToTilemap(string mapData)
