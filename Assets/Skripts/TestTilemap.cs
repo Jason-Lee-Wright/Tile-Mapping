@@ -14,17 +14,9 @@ public class TestTilemap : MonoBehaviour
 
     public int[,] MultMap = new int[15, 15];
 
-    void Start()
-    {
-        // Test by generating a map and displaying it
-        string generatedMap = GenerateMapString(15, 15);
-        string premade = LoadPremadeMap();
-        //ConvertMapToTilemap(generatedMap);
-        ConvertMapToTilemap(premade);
-    }
-
     private void Update()
     {
+        // Test by generating a map and displaying it, and the added ability to swap durring play time
         if (toggle == true && Input.GetKeyDown(KeyCode.Space))
         {
             string generatedMap = GenerateMapString(15, 15);
@@ -41,54 +33,51 @@ public class TestTilemap : MonoBehaviour
     // Generates a map string with specified width and height
     string GenerateMapString(int width, int height)
     {
-        StringBuilder map = new StringBuilder();
-        //Debug.Log("Code Start");
-        // Procedural generation rules
-
+        string[] mapData = new string[height]; // Store final map data here
         List<Vector2Int> wallAdjacentPositions = new List<Vector2Int>(); // Positions adjacent to walls
         int chestCount = 0;
         int maxChests = 3;
 
-        //Debug.Log("Generation Start");
         for (int y = 0; y < height; y++)
         {
+            StringBuilder row = new StringBuilder();
+
             for (int x = 0; x < width; x++)
             {
-
                 if (y == 0 || y == height - 1 || x == 0 || x == width - 1)
                 {
-                    //Debug.Log($"Wall Made : {x}, {y}");
-                    map.Append('#'); // Border walls
+                    row.Append('#'); // Border walls
                 }
                 else if ((x == width - 2 && y == height / 2) || (x == 1 && y == height / 2))
                 {
-                    //Debug.Log($"Door Made : {x}, {y}");
-                    map.Append('O'); // Place a door at the center for example
+                    row.Append('O'); // Place a door at the center for example
                 }
                 else
                 {
-                    //Debug.Log($"Floor Made : {x}, {y}");
-                    map.Append('.'); // Open floor space
-                                     // Check if position is adjacent to a wall
-                    if (IsAdjacentToWall(x, y, width, height))
+                    row.Append('.'); // Open floor space
+
+                    // Check if position is adjacent to a wall using previous rows in mapData
+                    if (IsAdjacentToWall(x, y, mapData))
                     {
                         wallAdjacentPositions.Add(new Vector2Int(x, y));
                     }
                 }
             }
-            map.AppendLine();
+
+            // Add the completed row to mapData
+            mapData[y] = row.ToString();
         }
 
         // Randomly place chests in wall-adjacent positions
-
         while (chestCount < maxChests && wallAdjacentPositions.Count > 0)
         {
             int randomIndex = UnityEngine.Random.Range(0, wallAdjacentPositions.Count);
             Vector2Int pos = wallAdjacentPositions[randomIndex];
 
-            // Replace the character in the StringBuilder with a chest at this position
-            int index = pos.y * (width + 1) + pos.x; // (width + 1) to account for newline characters
-            map[index] = '$';
+            // Replace the character in mapData with a chest
+            StringBuilder row = new StringBuilder(mapData[pos.y]);
+            row[pos.x] = '$';
+            mapData[pos.y] = row.ToString();
 
             Debug.Log($"Chest Made {pos.x} {pos.y}");
 
@@ -97,14 +86,42 @@ public class TestTilemap : MonoBehaviour
             chestCount++;
         }
 
-        return map.ToString();
+        // Convert mapData to a single string for ConvertMapToTilemap
+        StringBuilder finalMap = new StringBuilder();
+        foreach (string line in mapData)
+        {
+            finalMap.AppendLine(line);
+        }
+
+        return finalMap.ToString();
     }
 
     // Helper function to check if a position is adjacent to a wall
-    bool IsAdjacentToWall(int x, int y, int width, int height)
+    bool IsAdjacentToWall(int x, int y, string[] mapData)
     {
-        // Check adjacent tiles within bounds
-        return (x == 1 || x == width - 2 || y == 1 || y == height - 2);
+        // Check if there’s a wall character `#` in any of the four direct neighboring positions
+        // Make sure to stay within bounds of the mapData array
+        if (x > 0 && mapData[y][x - 1] == '#')
+        {
+            return true; // Left
+        }
+        if (x < mapData[y].Length - 1 && mapData[y][x + 1] == '#')
+        {
+            return true; // Right
+        }
+        if (y > 0 && mapData[y - 1][x] == '#') 
+        {
+            return true; // Down
+        }
+        if (y < mapData.Length - 1 && mapData[y + 1][x] == '#')
+        {
+            return true; // Up
+        }
+        else
+        {
+            return false;
+        }
+
     }
 
     public bool IsTilePassable(Vector3Int position)

@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class TileMovement : MonoBehaviour
 {
-    public float tileSize = 1f; // Size of each tile
-    public float moveSpeed = 5f; // Speed of movement between tiles
+    public float tileSize = 0.08f; // Size of each tile
+    public float moveSpeed = 1f; // Speed of movement between tiles
     private Vector3 targetPosition;
     private bool isMoving = false;
 
