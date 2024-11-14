@@ -99,29 +99,28 @@ public class TestTilemap : MonoBehaviour
     // Helper function to check if a position is adjacent to a wall
     bool IsAdjacentToWall(int x, int y, string[] mapData)
     {
-        // Check if there’s a wall character `#` in any of the four direct neighboring positions
-        // Make sure to stay within bounds of the mapData array
-        if (x > 0 && mapData[y][x - 1] == '#')
+        // Check if `mapData[y]` exists and if the position to the left contains a wall
+        if (x > 0 && mapData[y] != null && mapData[y][x - 1] == '#')
         {
             return true; // Left
         }
-        if (x < mapData[y].Length - 1 && mapData[y][x + 1] == '#')
+        // Check if `mapData[y]` exists and if the position to the right contains a wall
+        if (x < mapData[y]?.Length - 1 && mapData[y] != null && mapData[y][x + 1] == '#')
         {
             return true; // Right
         }
-        if (y > 0 && mapData[y - 1][x] == '#') 
+        // Check if the row above exists and if it contains a wall in the current x-position
+        if (y > 0 && mapData[y - 1] != null && mapData[y - 1][x] == '#')
         {
             return true; // Down
         }
-        if (y < mapData.Length - 1 && mapData[y + 1][x] == '#')
+        // Check if the row below exists and if it contains a wall in the current x-position
+        if (y < mapData.Length - 1 && mapData[y + 1] != null && mapData[y + 1][x] == '#')
         {
             return true; // Up
         }
-        else
-        {
-            return false;
-        }
 
+        return false; // No adjacent walls found
     }
 
     public bool IsTilePassable(Vector3Int position)
