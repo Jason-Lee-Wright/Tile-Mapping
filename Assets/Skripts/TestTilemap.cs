@@ -99,12 +99,12 @@ public class TestTilemap : MonoBehaviour
     // Helper function to check if a position is adjacent to a wall
     bool IsAdjacentToWall(int x, int y, string[] mapData)
     {
-        // Check if `mapData[y]` exists and if the position to the left contains a wall
+        // Check if mapData[y] exists and if the position to the left contains a wall
         if (x > 0 && mapData[y] != null && mapData[y][x - 1] == '#')
         {
             return true; // Left
         }
-        // Check if `mapData[y]` exists and if the position to the right contains a wall
+        // Check if mapData[y] exists and if the position to the right contains a wall
         if (x < mapData[y]?.Length - 1 && mapData[y] != null && mapData[y][x + 1] == '#')
         {
             return true; // Right
