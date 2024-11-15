@@ -5,6 +5,7 @@ public class TileMovement : MonoBehaviour
     public float tileSize = 0.08f; // Size of each tile
     public float moveSpeed = 1f; // Speed of movement between tiles
     private Vector3 targetPosition;
+    private Vector3Int lastMove;
     private bool isMoving = false;
 
     private TestTilemap map; // Reference to the TestTilemap script
@@ -34,13 +35,29 @@ public class TileMovement : MonoBehaviour
 
         // Check for input and move in the corresponding direction
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+        {
             TryMove(Vector3Int.up);
+            lastMove = Vector3Int.up;
+        }
         else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        {
             TryMove(Vector3Int.down);
+            lastMove = Vector3Int.down;
+        }
         else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+        {
             TryMove(Vector3Int.left);
+            lastMove = Vector3Int.left;
+        }
         else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+        {
             TryMove(Vector3Int.right);
+            lastMove = Vector3Int.right;
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            TryMove(lastMove * 2);
+        }
     }
 
     void TryMove(Vector3Int direction)
@@ -54,6 +71,8 @@ public class TileMovement : MonoBehaviour
         {
             targetPosition = map.tilemap.CellToWorld(targetGridPosition) + new Vector3(tileSize / 2, tileSize / 2, 0); // Offset to center on tile
             isMoving = true;
+
+            direction = lastMove;
         }
     }
 }
