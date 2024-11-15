@@ -54,7 +54,17 @@ public class TestTilemap : MonoBehaviour
                 }
                 else
                 {
-                    row.Append('.'); // Open floor space
+                    int rnd = UnityEngine.Random.Range(0, 30);
+                    
+                    if (rnd < 3)
+                    {
+                        row.Append('#'); // Random Floor placement (changing floor to wall randomly)
+                    }
+
+                    else
+                    {
+                        row.Append('.'); // Open floor space
+                    }
 
                     // Check if position is adjacent to a wall using previous rows in mapData
                     if (IsAdjacentToWall(x, y, mapData))
@@ -99,22 +109,18 @@ public class TestTilemap : MonoBehaviour
     // Helper function to check if a position is adjacent to a wall
     bool IsAdjacentToWall(int x, int y, string[] mapData)
     {
-        // Check if mapData[y] exists and if the position to the left contains a wall
         if (x > 0 && mapData[y] != null && mapData[y][x - 1] == '#')
         {
             return true; // Left
         }
-        // Check if mapData[y] exists and if the position to the right contains a wall
         if (x < mapData[y]?.Length - 1 && mapData[y] != null && mapData[y][x + 1] == '#')
         {
             return true; // Right
         }
-        // Check if the row above exists and if it contains a wall in the current x-position
         if (y > 0 && mapData[y - 1] != null && mapData[y - 1][x] == '#')
         {
             return true; // Down
         }
-        // Check if the row below exists and if it contains a wall in the current x-position
         if (y < mapData.Length - 1 && mapData[y + 1] != null && mapData[y + 1][x] == '#')
         {
             return true; // Up
@@ -143,7 +149,7 @@ public class TestTilemap : MonoBehaviour
 
         for (int y = 0; y < height; y++)
         {
-            for (int x = 0; x < width - 1; x++) // Added - 1 as the tiles extended one past the limit
+            for (int x = 0; x < width - 1; x++) // Added - 1 as the tiles extended one past the limit giving us an index out of range error
             {
                 Vector3Int tilePosition = new Vector3Int(x, height - y - 1, 0);
                 char tileChar = lines[y][x];
@@ -175,7 +181,7 @@ public class TestTilemap : MonoBehaviour
     // Load a premade map from a file and convert it to a single string for tilemap conversion
     string LoadPremadeMap()
     {
-        string path = @"C:\Jason Projects\Unity\Tile Mapping\Assets\Text\TextFile1.txt";
+        string path = @"C:\Jason Projects\Unity\Tile Mapping\Assets\Text\TextFile1.txt"; //This may need to be adjusted for each computer
 
         if (System.IO.File.Exists(path))
         {
@@ -193,6 +199,7 @@ public class TestTilemap : MonoBehaviour
 
             return mapBuilder.ToString();
         }
+        // If no file is found
         else
         {
             Debug.LogError("File not found at: " + path);

@@ -50,10 +50,10 @@ public class TileMovement : MonoBehaviour
         Vector3Int targetGridPosition = gridPosition + direction;
 
         // Check if the target tile is passable
-        /*if (map.IsTilePassable(targetGridPosition))
+        if (map.IsTilePassable(targetGridPosition))
         {
             targetPosition = map.tilemap.CellToWorld(targetGridPosition) + new Vector3(tileSize / 2, tileSize / 2, 0); // Offset to center on tile
             isMoving = true;
-        }*/
+        }
     }
 }
