@@ -9,7 +9,7 @@ using UnityEngine.Tilemaps;
 public class TestTilemap : MonoBehaviour
 {
     public Tilemap tilemap; // Reference to the Tilemap component
-    public Tile wallTile, doorTile, chestTile, floorTile; // Tile assets for different map elements
+    public Tile wallTile, doorTile, chestTile, floorTile, plantTile; // Tile assets for different map elements
     public bool toggle = true;
 
     public int[,] MultMap = new int[15, 15];
@@ -59,6 +59,10 @@ public class TestTilemap : MonoBehaviour
                     if (rnd < 3)
                     {
                         row.Append('#'); // Random Floor placement (changing floor to wall randomly)
+                    }
+                    else if (3 < rnd && rnd <= 10)
+                    {
+                        row.Append('!'); // Random Plant placement (doing the same as wall)
                     }
 
                     else
@@ -134,7 +138,7 @@ public class TestTilemap : MonoBehaviour
         TileBase tile = tilemap.GetTile(position);
 
         // Check if the tile at the given position is impassable
-        return tile != wallTile && tile != doorTile && tile != chestTile;
+        return tile != wallTile && tile != doorTile && tile != chestTile && tile != null;
     }
 
 
@@ -168,6 +172,9 @@ public class TestTilemap : MonoBehaviour
                         break;
                     case '.':
                         tilemap.SetTile(tilePosition, floorTile);
+                        break;
+                    case '!':
+                        tilemap.SetTile(tilePosition, plantTile);
                         break;
                     default:
                         tilemap.SetTile(tilePosition, floorTile);

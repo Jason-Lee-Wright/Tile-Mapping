@@ -56,11 +56,16 @@ public class TileMovement : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            TryMove(lastMove * 2);
+            // First, try moving in the last direction (1 tile)
+            if (TryMove(lastMove))
+            {
+                // If the first move is successful, try moving in the same direction (2 tiles)
+                TryMove(lastMove * 2);
+            }
         }
     }
 
-    void TryMove(Vector3Int direction)
+    bool TryMove(Vector3Int direction)
     {
         // Calculate the new tile position
         Vector3Int gridPosition = map.tilemap.WorldToCell(transform.position);
@@ -71,8 +76,9 @@ public class TileMovement : MonoBehaviour
         {
             targetPosition = map.tilemap.CellToWorld(targetGridPosition) + new Vector3(tileSize / 2, tileSize / 2, 0); // Offset to center on tile
             isMoving = true;
-
-            direction = lastMove;
+            return true; // Move was successful
         }
+
+        return false; // Move was not possible
     }
 }
